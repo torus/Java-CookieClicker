@@ -4,25 +4,26 @@ import javax.swing.*;
 
 public class CookieClicker extends JFrame {
     public CookieClicker() {
-        setSize(500, 500);
+        setSize(400, 600);
         setTitle("Software Development II");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        MyJPanel panel= new MyJPanel();
+        CookiePanel panel= new CookiePanel();
         Container c = getContentPane();
         c.add(panel);
         setVisible(true);
     }
 
-    public class MyJPanel extends JPanel implements ActionListener {
+    public class CookiePanel extends JPanel implements ActionListener {
         JLabel cookiesLabel;
         JButton cookieButton;
         double cookies = 0;
-        Dimension dim;
-        public MyJPanel() {
+
+        public CookiePanel() {
             cookiesLabel = new JLabel("0 Cookies", JLabel.CENTER);
-            cookiesLabel.setPreferredSize(new Dimension(400, 30));
+            cookiesLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 23));
+            cookiesLabel.setPreferredSize(new Dimension(300, 50));
             cookieButton = new JButton("Cookie");
-            cookieButton.setPreferredSize(new Dimension(400, 400));
+            cookieButton.setPreferredSize(new Dimension(300, 300));
             cookieButton.addActionListener(this);
 
             add(cookiesLabel);
@@ -30,14 +31,12 @@ public class CookieClicker extends JFrame {
         }
 
         public void paintComponent(Graphics g) {
-            dim = getSize();
             // super.paintComponent(g);
 
             cookiesLabel.setText(String.format("%d Cookies", (long)cookies));
         }
 
         public void actionPerformed(ActionEvent e) {
-            // System.out.println("x");
             cookies += 1.0;
             repaint();
         }
