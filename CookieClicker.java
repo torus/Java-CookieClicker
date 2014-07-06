@@ -5,6 +5,9 @@ import javax.swing.border.BevelBorder;
 import java.util.Date;
 
 public class CookieClicker extends JFrame {
+    double cookies = 0;
+    double cookiesPerSecond = 0;
+
     public CookieClicker() {
         setSize(800, 600);
         setTitle("Cookie Clicker");
@@ -13,20 +16,28 @@ public class CookieClicker extends JFrame {
         setLayout(new FlowLayout());
 
         Container c = getContentPane();
-        c.add(new CookiePanel());
-        c.add(new ProducerPanel());
-        c.add(new ItemPanel());
+        c.add(new CookiePanel(this));
+        c.add(new ProducerPanel(this));
+        c.add(new ItemPanel(this));
         setVisible(true);
+    }
+
+    public double getCookiesPerSecond() {
+        return cookiesPerSecond;
+    }
+
+    public void addCookiesPerSecond(double cps) {
+        cookiesPerSecond += cps;
     }
 
     public class CookiePanel extends JPanel implements ActionListener {
         JLabel cookiesLabel, cpsLabel;
         JButton cookieButton;
-        double cookies = 0;
-        double cookiesPerSecond = 0.15;
         Date lastDate = new Date();
+        CookieClicker clicker;
 
-        public CookiePanel() {
+        public CookiePanel(CookieClicker parent) {
+            clicker = parent;
             setPreferredSize(new Dimension(220, 550));
             BevelBorder border = new BevelBorder(BevelBorder.RAISED);
             setBorder(border);
@@ -61,14 +72,10 @@ public class CookieClicker extends JFrame {
             long elapsed = current.getTime() - lastDate.getTime();
             lastDate = current;
 
-            cookies += cookiesPerSecond * (elapsed / 1000.0);
+            cookies += clicker.getCookiesPerSecond() * (elapsed / 1000.0);
 
             cookiesLabel.setText(String.format("%d Cookies", (long)cookies));
             cpsLabel.setText(String.format("per seconds: %.2f", cookiesPerSecond));
-        }
-
-        public void addCookiesPerSecond(double cps) {
-            cookiesPerSecond += cps;
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -78,7 +85,7 @@ public class CookieClicker extends JFrame {
     }
 
     public class ProducerPanel extends JPanel {
-        public ProducerPanel() {
+        public ProducerPanel(CookieClicker clicker) {
             setPreferredSize(new Dimension(280, 550));
             BevelBorder border = new BevelBorder(BevelBorder.RAISED);
             setBorder(border);
@@ -86,10 +93,31 @@ public class CookieClicker extends JFrame {
     }
 
     public class ItemPanel extends JPanel {
-        public ItemPanel() {
+        CookieClicker clicker;
+        public ItemPanel(CookieClicker parent) {
+            clicker = parent;
+
             setPreferredSize(new Dimension(280, 550));
             BevelBorder border = new BevelBorder(BevelBorder.RAISED);
             setBorder(border);
+
+            addItem("Cursor", 0.1);
+            addItem("Grandma", 1);
+            addItem("Farm", 3);
+        }
+
+        public void addItem(String name, double c) {
+            final double cps = c;
+            JButton itemButton;
+            itemButton = new JButton(name);
+            itemButton.setPreferredSize(new Dimension(200, 40));
+            ActionListener taskPerformer = new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                        clicker.addCookiesPerSecond(cps);
+                    }
+                };
+            itemButton.addActionListener(taskPerformer);
+            add(itemButton);
         }
     }
 }
