@@ -1,9 +1,21 @@
-TARGET = Ex_11_1001015132.class
+NUMBER = 12
+BASENAME = Ex_$(NUMBER)_1001015132
+TARGET = $(BASENAME).class
+ZIPDIR = $(BASENAME)
+SOURCES = CookieClicker.java $(BASENAME).java
 
-run: Ex_11_1001015132.class
-	java Ex_11_1001015132
+run: $(TARGET)
+	java $(BASENAME)
 
-Ex_11_1001015132.class: CookieClicker.java
+zip: $(ZIPDIR)
+	zip -r $(ZIPDIR).zip $(ZIPDIR)
+
+$(ZIPDIR):
+	mkdir -p $(ZIPDIR)
+	[ -d $(ZIPDIR) ]
+	cp $(SOURCES) $(ZIPDIR)
+
+$(TARGET): $(SOURCES)
 
 %.class: %.java
 	javac $^
