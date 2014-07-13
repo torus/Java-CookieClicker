@@ -18,7 +18,7 @@ public class CookieClicker extends JFrame {
         Container c = getContentPane();
         c.add(new CookiePanel(this));
         c.add(new ProducerPanel(this));
-        c.add(new ItemPanel(this));
+        c.add(new ShopPanel(this));
         setVisible(true);
     }
 
@@ -28,6 +28,14 @@ public class CookieClicker extends JFrame {
 
     public void addCookiesPerSecond(double cps) {
         cookiesPerSecond += cps;
+    }
+
+    public double getCookies() {
+        return cookies;
+    }
+
+    public void decreaseCookies(double amount) {
+        cookies -= amount;
     }
 
     public class CookiePanel extends JPanel implements ActionListener {
@@ -92,32 +100,57 @@ public class CookieClicker extends JFrame {
         }
     }
 
-    public class ItemPanel extends JPanel {
-        CookieClicker clicker;
-        public ItemPanel(CookieClicker parent) {
+    public class ShopItem {
+        final String name;
+        final double price;
+        final double cps;
+        final JButton button;
+
+        public ShopItem(String nm, double pr, double c, final CookieClicker clicker) {
+            name = nm;
+            price = pr;
+            cps = c;
+
+            button = new JButton(String.format("%s %d", name, (long)price));
+            button.setPreferredSize(new Dimension(200, 40));
+            ActionListener taskPerformer = new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                        if (price <= clicker.getCookies()) {
+                            clicker.addCookiesPerSecond(cps);
+                            clicker.decreaseCookies(price);
+                        }
+                    }
+                };
+            button.addActionListener(taskPerformer);
+        }
+
+        public JButton getButton() {
+            return button;
+        }
+    }
+
+    public class ShopPanel extends JPanel {
+        final CookieClicker clicker;
+        public ShopPanel(CookieClicker parent) {
             clicker = parent;
 
             setPreferredSize(new Dimension(280, 550));
             BevelBorder border = new BevelBorder(BevelBorder.RAISED);
             setBorder(border);
 
-            addItem("Cursor", 0.1);
-            addItem("Grandma", 1);
-            addItem("Farm", 3);
+            JLabel label = new JLabel("Shop", JLabel.CENTER);
+            label.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 23));
+            label.setPreferredSize(new Dimension(200, 50));
+            add(label);
+
+            addItem("Cursor", 10, 0.1);
+            addItem("Grandma", 20, 1);
+            addItem("Farm", 30, 3);
         }
 
-        public void addItem(String name, double c) {
-            final double cps = c;
-            JButton itemButton;
-            itemButton = new JButton(name);
-            itemButton.setPreferredSize(new Dimension(200, 40));
-            ActionListener taskPerformer = new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {
-                        clicker.addCookiesPerSecond(cps);
-                    }
-                };
-            itemButton.addActionListener(taskPerformer);
-            add(itemButton);
+        public void addItem(String name, double price, double cps) {
+            ShopItem item = new ShopItem(name, price, cps, clicker);
+            add(item.getButton());
         }
     }
 }
