@@ -1,4 +1,4 @@
-NUMBER = 12
+NUMBER =
 BASENAME = Ex_$(NUMBER)_1001015132
 TARGET = $(BASENAME).class
 ZIPDIR = 1001015132_$(NUMBER)
@@ -7,14 +7,16 @@ SOURCES = CookieClicker.java $(BASENAME).java
 run: $(TARGET)
 	java $(BASENAME)
 
-zip: $(ZIPDIR)
+zip: $(ZIPDIR).zip
+
+$(ZIPDIR).zip: $(ZIPDIR)
+	cp $(SOURCES) ../$(NUMBER)/*.doc $(ZIPDIR)
+	[ -f $(ZIPDIR).zip ] && rm $(ZIPDIR).zip || true
+	zip -r $(ZIPDIR).zip $(ZIPDIR)
 
 $(ZIPDIR):
 	[ -d $(ZIPDIR) ] && rm -r $(ZIPDIR) || true
 	mkdir -p $(ZIPDIR)
-	cp $(SOURCES) ../$(NUMBER)/*.doc $(ZIPDIR)
-	[ -f $(ZIPDIR).zip ] && rm $(ZIPDIR).zip || true
-	zip -r $(ZIPDIR).zip $(ZIPDIR)
 
 $(TARGET): $(SOURCES)
 
