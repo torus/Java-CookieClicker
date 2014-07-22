@@ -3,10 +3,12 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.util.Date;
+import java.util.Hashtable;
 
 public class CookieClicker extends JFrame {
     double cookies = 0;
     double cookiesPerSecond = 0;
+    ProducerPanel producerPanel;
 
     public CookieClicker() {
         setSize(800, 600);
@@ -17,7 +19,7 @@ public class CookieClicker extends JFrame {
 
         Container c = getContentPane();
         c.add(new CookiePanel(this));
-        c.add(new ProducerPanel(this));
+        c.add(producerPanel = new ProducerPanel(this));
         c.add(new ShopPanel(this));
         setVisible(true);
     }
@@ -36,6 +38,10 @@ public class CookieClicker extends JFrame {
 
     public void decreaseCookies(double amount) {
         cookies -= amount;
+    }
+
+    public void addProducer(String name) {
+        producerPanel.add(name);
     }
 
     public class CookiePanel extends JPanel implements ActionListener {
@@ -93,10 +99,39 @@ public class CookieClicker extends JFrame {
     }
 
     public class ProducerPanel extends JPanel {
+        Hashtable<String, ItemPanel> inventory = new Hashtable<String, ItemPanel>();
+
         public ProducerPanel(CookieClicker clicker) {
             setPreferredSize(new Dimension(280, 550));
             BevelBorder border = new BevelBorder(BevelBorder.RAISED);
             setBorder(border);
+        }
+
+        public class ItemPanel extends JPanel {
+            int count = 0;
+            String name;
+            public ItemPanel(String nm) {
+                name = nm;
+                setPreferredSize(new Dimension(260, 50));
+                BevelBorder border = new BevelBorder(BevelBorder.RAISED);
+                setBorder(border);
+            }
+            public void increment() {
+                ImageIcon icon = new ImageIcon("./resources/dress.png");
+                JLabel label = new JLabel(icon);
+                add(label);
+            }
+        }
+
+        public void add(String name) {
+            if (!inventory.containsKey(name)) {
+                ItemPanel panel = new ItemPanel(name);
+                panel.increment();
+                inventory.put(name, panel);
+                add(panel);
+            } else {
+                inventory.get(name).increment();
+            }
         }
     }
 
@@ -118,6 +153,7 @@ public class CookieClicker extends JFrame {
                         if (price <= clicker.getCookies()) {
                             clicker.addCookiesPerSecond(cps);
                             clicker.decreaseCookies(price);
+                            clicker.addProducer(name);
                         }
                     }
                 };
