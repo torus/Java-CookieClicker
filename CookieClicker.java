@@ -62,7 +62,9 @@ public class CookieClicker extends JFrame {
             cpsLabel = new JLabel("per seconds: 0", JLabel.CENTER);
             cpsLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12));
             cpsLabel.setPreferredSize(new Dimension(200, 20));
-            cookieButton = new JButton("Cookie");
+
+            ImageIcon icon = new ImageIcon("./resources/donut.png");
+            cookieButton = new JButton(icon);
             cookieButton.setPreferredSize(new Dimension(200, 200));
             cookieButton.addActionListener(this);
 
@@ -117,7 +119,7 @@ public class CookieClicker extends JFrame {
                 setBorder(border);
             }
             public void increment() {
-                ImageIcon icon = new ImageIcon("./resources/dress.png");
+                ImageIcon icon = new ImageIcon(String.format("./resources/%s.png", name));
                 JLabel label = new JLabel(icon);
                 add(label);
             }
@@ -137,8 +139,8 @@ public class CookieClicker extends JFrame {
 
     public class ShopItem {
         final String name;
-        final double price;
-        final double cps;
+        double price;
+        double cps;
         final JButton button;
 
         public ShopItem(String nm, double pr, double c, final CookieClicker clicker) {
@@ -152,8 +154,12 @@ public class CookieClicker extends JFrame {
                     public void actionPerformed(ActionEvent evt) {
                         if (price <= clicker.getCookies()) {
                             clicker.addCookiesPerSecond(cps);
-                            clicker.decreaseCookies(price);
-                            clicker.addProducer(name);
+                            clicker.decreaseCookies((long)price);
+                            price = price * 1.2;
+                            button.setText(String.format("%s %d", name, (long)price));
+                            if (name != "Cursor") {
+                                clicker.addProducer(name);
+                            }
                         }
                     }
                 };
