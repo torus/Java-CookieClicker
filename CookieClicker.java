@@ -158,9 +158,8 @@ public class CookieClicker extends JFrame {
                             price = price * 1.3;
                             cps = cps * 1.05;
                             button.setText(String.format("%s %d", name, (long)price));
-                            if (name != "Cursor") {
-                                clicker.addProducer(name);
-                            }
+
+                            clicker.addProducer(name);
                         }
                     }
                 };
