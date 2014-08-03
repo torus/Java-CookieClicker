@@ -155,7 +155,8 @@ public class CookieClicker extends JFrame {
                         if (price <= clicker.getCookies()) {
                             clicker.addCookiesPerSecond(cps);
                             clicker.decreaseCookies((long)price);
-                            price = price * 1.2;
+                            price = price * 1.3;
+                            cps = cps * 1.05;
                             button.setText(String.format("%s %d", name, (long)price));
                             if (name != "Cursor") {
                                 clicker.addProducer(name);
@@ -164,6 +165,28 @@ public class CookieClicker extends JFrame {
                     }
                 };
             button.addActionListener(taskPerformer);
+
+            int delay = 100;
+            ActionListener timerTaskPerformer = new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                        if (price <= clicker.getCookies()) {
+                            if (!button.isEnabled()) {
+                                button.setEnabled(true);
+                                button.repaint();
+                            }
+                        } else {
+                            if (button.isEnabled()) {
+                                button.setEnabled(false);
+                                button.repaint();
+                            }
+                        }
+                    }
+                };
+            new Timer(delay, timerTaskPerformer).start();
+        }
+
+        public long getPrice() {
+            return (long)price;
         }
 
         public JButton getButton() {
@@ -187,7 +210,9 @@ public class CookieClicker extends JFrame {
 
             addItem("Cursor", 10, 0.1);
             addItem("Grandma", 20, 1);
-            addItem("Farm", 30, 3);
+            addItem("Farm", 100, 7);
+            addItem("Factory", 800, 13);
+            addItem("Mine", 3000, 40);
         }
 
         public void addItem(String name, double price, double cps) {
